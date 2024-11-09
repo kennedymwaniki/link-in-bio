@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 
 from .models import Profile, Link
 
@@ -19,11 +19,15 @@ class LinkListView(ListView):
 
 class LinkCreateView(CreateView):
     model = Link
+    fields = "__all__"
+    success_url = reverse_lazy('link-list')
     # template - model_form.html
     # figure out what fields - could pass a list
-    fields = "__all__"
     # success_url
-    success_url = reverse_lazy('link-list')
+    #           or specify fields
+    #  fields = ['text', 'url', 'profile']
+    # template_name = 'link_form.html'
+    # success_url = '/'
 
 
 class LinkUpdateView(UpdateView):
@@ -50,3 +54,16 @@ def profile_view(request, profile_slug):
         "links": links
     }
     return render(request, 'link_plant/profile.html', context)
+
+
+# class ProfileView(DetailView):
+#     model = Profile
+#     template_name = 'profile.html'
+#     context_object_name = 'profile'
+#     slug_field = 'slug'
+#     slug_url_kwarg = 'profile_slug'
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context['links'] = self.object.links.all()
+#         return context
